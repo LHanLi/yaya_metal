@@ -44,7 +44,7 @@ def create_random_alloys(atoms_in, cn, nsamples=1, id1=1, vasp5=False):
     for i in np.arange(nsamples):
         atoms = disorder_atoms(atoms)
         filename = 'POSCAR_%.2f_%03d'%(cn[0], i + id1 )
-        vf.my_write_vasp(atoms, filename, vasp5=vasp5)
+        vf.my_write_vasp(atoms, filename)
 
 
 ###############################################################################################
