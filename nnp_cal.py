@@ -1,13 +1,7 @@
 import numpy as np
-import re
 from myvasp import vasp_func as vf
 import os, copy, time
-
-from ase.atoms import Atoms
-from ase.calculators.lammps import Prism, convert
-from ase.utils import reader, writer
-import ase.io.lammpsdata as al 
-import ase.io.lammpsrun as alr
+import yaya_io
 
 # get neural network potential energy of atoms. file lammps is needed which contains 
 #nnp-data(contains input.nn, scaling.data, weights.*.data) lammps in file and run.bash to excute lammps file.
@@ -20,7 +14,7 @@ def eval_nnp(atoms):
     except:                        
         print('!!!!!!!!!!!!!!!!!!!no lammps!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')                                     
         os._exit(0) 
-    write_lammps_data(atoms)
+    yaya_io.write_lammps_data(atoms)
 # mpirun my_lmp 
     os.system('./run.bash')                                                                              
     os.chdir('../')
