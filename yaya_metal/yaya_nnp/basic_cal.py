@@ -1,7 +1,7 @@
 import numpy as np
 from myvasp import vasp_func as vf
 import os, copy, time
-import yaya_io
+from yaya_metal.yaya_re import yaya_io
 
 # get neural network potential energy of atoms. file lammps is needed which contains 
 #nnp-data(contains input.nn, scaling.data, weights.*.data) lammps in file and run.bash to excute lammps file.
