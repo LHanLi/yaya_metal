@@ -1,6 +1,7 @@
 import numpy as np
 import re
 from myvasp import vasp_func as vf
+from myvasp import vasp_io
 import os, copy, time
 
 from ase.atoms import Atoms
@@ -28,9 +29,13 @@ def read_lammps_data(file_name):
     fd.close()
     return atoms
 
+#write vasp POSCAR
+def write_vasp_pos(atoms_in, name = 'POSCAR'):
+    vasp_io.my_write_vasp(atoms_in, filename = name)
+
 #write lammps data
-def write_lammps_data(atoms_in):
-    write_filename = 'atoms.data'
+def write_lammps_data(atoms_in, filename = 'atoms.data'):
+    write_filename = filename
     fd = open(write_filename, 'w')
     al.write_lammps_data(fd, atoms_in)
     fd.close()
