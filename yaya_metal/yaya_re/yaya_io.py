@@ -1,6 +1,5 @@
 import numpy as np
 import re
-from myvasp import vasp_func as vf
 from myvasp import vasp_io
 import os, copy, time
 
@@ -12,13 +11,16 @@ import ase.io.lammpsrun as alr
 
 #read vasp CONTCAR data
 def read_vasp(file_name):
-    atoms = vf.my_read_vasp(file_name)
+    atoms = vasp_io.my_read_vasp(file_name)
     return atoms
 
 #read lammps dump file
 def read_lammps_dump(file_name):
     fd = open(file_name, 'r')
     atoms = alr.read_lammps_dump_text(fd)
+    # mol % of each element
+    cn = vasp_io.get_cn(atoms)
+    atoms.cn = cn 
     fd.close()
     return atoms
 
@@ -26,6 +28,9 @@ def read_lammps_dump(file_name):
 def read_lammps_data(file_name):
     fd = open(file_name, 'r')
     atoms = ase_read_data(fd, style = 'atomic')
+    # mol % of each element
+    cn = vasp_io.get_cn(atoms)
+    atoms.cn = cn 
     fd.close()
     return atoms
 
