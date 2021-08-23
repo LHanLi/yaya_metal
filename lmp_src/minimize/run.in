@@ -1,0 +1,53 @@
+###############################################################################
+# minimize structure using nerual network potential and record sanpshot
+###############################################################################
+
+###############################################################################
+# VARIABLES
+###############################################################################
+clear
+# Configuration files
+variable cfgFile         string "atoms.data"
+# NN  6.01 is a little bigger than 6, which is cutoff radius in nnp
+variable nnpCutoff       equal  6.01
+variable nnpDir          string "nnp-data"
+# Masses
+variable mass_Au          equal  197                                                  # mass for element 1 (Au)  (g/mol)
+variable mass_Ni         equal  58.6934                                                  # mass for element 2 (Ni) (g/mol)
+
+###############################################################################
+# GENERAL SETUP
+###############################################################################
+units metal
+boundary p p p
+atom_style atomic
+read_data ${cfgFile}
+mass 1 ${mass_Au}
+mass 2 ${mass_Ni}
+
+###############################################################################
+# NN
+# nnp, dir: nnp file, showew: extrapolation warnings, showewsun: counting 100\0, maxew: max number of ew or stopped
+# resetew: reset for maxew every step, cf*: unit conversion factors  
+###############################################################################
+pair_style nnp dir ${nnpDir} showew no showewsum 0 resetew yes maxew 100000000000 cflength 1.0 cfenergy 1.0 emap "1:Au,2:Ni"
+pair_coeff * * ${nnpCutoff}
+
+###############################################################################
+#compute energy and output
+##############################################################################
+thermo         1
+thermo_style    custom step pe etotal
+
+
+min_style   cg        #conjugate gradient
+min_modify  dmax 1.0e-2  line quadratic
+# 1 sigma  (e-3)/5
+minimize 2e-4  0  500 10000   #eV/angstrom
+#minimize 0 1e-1 500 10000
+
+run 1
+#dump atomcoor all custom 1 ./dump/min.* id type x y z
+write_dump all custom min id type x y z  
+
+
