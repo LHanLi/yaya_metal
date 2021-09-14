@@ -6,6 +6,7 @@ from myvasp import vasp_create_fcc as vcf
 def disorder_atoms(atoms):
     # randomize pos
 # follow a random number after each position, sort random number
+	atoms = copy.deepcopy(atoms)
     natoms = atoms.numbers.shape[0]
     temp = np.hstack([ atoms.positions, \
     np.random.random_sample([natoms, 1]) ])
