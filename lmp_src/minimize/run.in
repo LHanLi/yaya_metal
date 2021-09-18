@@ -40,14 +40,20 @@ thermo         1
 thermo_style    custom step pe etotal
 
 
-min_style   cg        #conjugate gradient
-min_modify  dmax 1.0e-2  line quadratic
-# 1 sigma  (e-3)/5
-minimize 2e-4  0  500 10000   #eV/angstrom
+#min_style   cg        #conjugate gradient
+#min_modify  dmax 1.0e-2  line quadratic
+# 3 sigma 3 (e-3)/5
+#minimize 6e-4  0  9  10000   #eV/angstrom
 #minimize 0 1e-1 500 10000
+min_style sd
+#min_modify  dmax 1.0e-2
+minimize 0 1e-3 10000 1000000 #move a little step according gradient
+
 
 run 1
 #dump atomcoor all custom 1 ./dump/min.* id type x y z
 write_dump all custom min id type x y z  
 
+#fix 0 all store/state 0 fx fy fz x y z
+#write_dump all custom forces.out id fx fy fz x y z modify sort id 
 
