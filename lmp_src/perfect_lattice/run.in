@@ -1,0 +1,55 @@
+###############################################################################                                       
+# minimize with LJ potential(perfect lattice when there is only one kind of atom)
+###############################################################################
+
+###############################################################################
+# VARIABLES
+###############################################################################
+clear
+# Configuration files
+variable cfgFile         string "atoms.data"
+# NN  6.01 is a little bigger than 6, which is cutoff radius in nnp
+variable cutoff       equal  6.01
+# Masses
+variable mass          equal  100                                                  # mass for element 1 (Au)  (g/mol)
+
+###############################################################################
+# GENERAL SETUP
+###############################################################################
+units metal
+boundary p p p
+atom_style atomic
+read_data ${cfgFile}
+mass 1 ${mass}
+mass 2 ${mass}
+
+###############################################################################
+# LJ potential
+#
+###############################################################################
+pair_style lj/cut ${cutoff}
+pair_coeff * * 0.4414 2.637         # 1eV = 11606K 
+
+###############################################################################
+#compute energy and output
+##############################################################################
+thermo         1
+thermo_style    custom step pe etotal
+
+
+min_style   cg        #conjugate gradient
+min_modify  dmax 1.0e-2  line quadratic
+# 3 sigma 3 (e-3)/5
+#minimize 6e-4  0  9  10000   #eV/angstrom
+minimize 0 1.0e-6 500 10000
+#min_style sd
+#min_modify  dmax 1.0e-2
+#minimize 0 1.0e-6 1000 1000 #move a little step according gradient
+
+run 0
+#dump atomcoor all custom 1 ./dump/min.* id type x y z
+write_dump all custom perfect id type x y z modify sort id 
+
+fix 0 all store/state 0 fx fy fz x y z
+write_dump all custom forces.out id fx fy fz x y z modify sort id   
+
