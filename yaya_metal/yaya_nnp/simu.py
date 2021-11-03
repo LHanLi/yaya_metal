@@ -15,6 +15,15 @@ def minimize(atoms_in):
     return atoms
 
 
+def md(atoms_in):
+    os.chdir('md')
+    yaya_io.write_lammps_data(atoms_in)
+    os.system('./run.bash')
+    atoms = yaya_io.read_lammps_dump('min')
+    os.chdir('../')
+    return atoms
+
+
 
 
 # need file lammps
