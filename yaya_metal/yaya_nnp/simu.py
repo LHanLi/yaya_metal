@@ -70,7 +70,7 @@ def mc(atoms_in, T, nstep):
         
         #acceptance probability
         P = np.exp( -dEf/kT )
-        print(Ef_all[-1],P)
+        print(Ef_all[-1],P,Ef2)
         if P > np.random.random_sample() :
           #accept
             atoms = copy.deepcopy(atoms2)
