@@ -33,6 +33,18 @@ def read_energy(i):
     os.chdir('../')
     return energy
 
+# stress[0,1,2,...5] pxx pyy pzz pxy pxz pyz
+def read_stress():
+    os.chdir('lammps')
+    with open('stress.out','r') as s:
+        lines = s.readlines()
+        for l in lines:
+            if l[0] != '#':
+                l_ = l.split()
+                stress = float(s_)
+        os.chdir('../')
+    return stress
+
 
 # read forces    forces[0][0] is fx of 0th atom
 def read_forces():
