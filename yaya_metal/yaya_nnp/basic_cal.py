@@ -41,8 +41,8 @@ def read_stress():
         for l in lines:
             if l[0] != '#':
                 l_ = l.split()
-                stress = float(s_)
-        os.chdir('../')
+                stress = [float(x) for x in l_]
+    os.chdir('../')
     return stress
 
 
