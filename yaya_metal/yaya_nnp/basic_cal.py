@@ -75,5 +75,6 @@ def read_forces():
             forces.append(force)
     f.close()
     os.chdir('../')
+    forces = np.array(forces)
     return forces
 
