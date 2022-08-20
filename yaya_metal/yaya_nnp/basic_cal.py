@@ -20,6 +20,20 @@ def eval_nnp(atoms):
     os.chdir('../')
     return 0
 
+# get atoms.data
+def read_atoms():
+    os.chdir('lammps')
+    atoms = yaya_io.read_lammps_data('atoms.data')
+    os.chdir('../')
+    return atoms
+
+# get min
+def read_min():
+    os.chdir('lammps')
+    atoms = yaya_io.read_lammps_dump('min')
+    os.chdir('../')
+    return atoms
+
 
 # get energy from energy.out                      le[0] etotal le[1] count(all) le[2] e per atom
 def read_energy(i):
