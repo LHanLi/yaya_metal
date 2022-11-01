@@ -51,7 +51,7 @@ def calc_eta(atoms,cutoff_radius,n_of_bins):
 
     n = n * cc_scale
 
-    return rdf_name, n
+    return rdf_names, n
 
 
 
