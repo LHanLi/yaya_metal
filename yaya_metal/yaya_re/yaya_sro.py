@@ -1,7 +1,60 @@
-from myvasp import vasp_EPI_dp_shell as epi_dp                                                                        
+from myvasp import vasp_EPI_dp_shell as epi_dp          
+from ovito.io import import_file
+from ovito.modifiers import CoordinationAnalysisModifier
 from yaya_metal.yaya_re import yaya_io
 import numpy as np
 import os, re
+
+# scale rdf to eta
+def calc_cc_scale(cn):
+    # scaling factors, e.g., c1c1, 2c1c2, c2c2
+    cn2 = cn[np.newaxis, :].copy()
+    cn2prod = cn2.T @ cn2
+
+    nelem = cn.shape[0]
+    cc_scale = np.array([])
+
+    for i in np.arange(nelem):
+        for j in np.arange(i, nelem):
+            temp = cn2prod[i, j]
+            if i != j :
+                temp = temp*2
+            cc_scale = np.append(cc_scale, temp)
+
+    return cc_scale
+
+#a = 3.81
+#V0 = a**3/4
+
+def calc_eta(atoms,cutoff_radius,n_of_bins):
+# get rdf
+    from ovito.pipeline import StaticSource, Pipeline
+    from ovito.io.ase import ase_to_ovito
+    data = ase_to_ovito(atoms)
+    pipeline = Pipeline(source = StaticSource(data = data))
+    pipeline.modifiers.append(CoordinationAnalysisModifier(cutoff=cutoff_radius, number_of_bins=n_of_bins, partial=True))
+    rdf_table = pipeline.compute().tables['coordination-rdf']
+    data_rdf = rdf_table.xy()
+    rdf_names = rdf_table.y.component_names
+# V0
+    V0 = atoms.get_volume()/len(atoms.numbers)
+# cc_scale
+    cc_scale = calc_cc_scale(atoms.cn)
+      
+    data = data_rdf.copy()
+    r = data[:,0].copy()
+    dr = r[1] - r[0]
+    n = data[:, 1:].copy()   # number of neighbours for each pair
+
+    dv = 1/V0*4/3*np.pi * ((r+dr/2)**3 - (r-dr/2)**3)
+    n = (n.T * dv).T
+
+    n = n * cc_scale
+
+    return rdf_name, n
+
+
+
 
 # require file perfect_lattice
 
