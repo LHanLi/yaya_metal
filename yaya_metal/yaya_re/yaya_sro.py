@@ -25,8 +25,8 @@ def calc_cc_scale(cn):
 
 #a = 3.81
 #V0 = a**3/4
-
-def calc_eta(atoms,cutoff_radius,n_of_bins):
+# order i.e. order first as 'H-H'  then ('He-He','He-H','H-H') reverse
+def calc_eta(atoms,cutoff_radius,n_of_bins,order):
 # get rdf
     from ovito.pipeline import StaticSource, Pipeline
     from ovito.io.ase import ase_to_ovito
@@ -40,7 +40,8 @@ def calc_eta(atoms,cutoff_radius,n_of_bins):
     V0 = atoms.get_volume()/len(atoms.numbers)
 # cc_scale
     cc_scale = calc_cc_scale(atoms.cn)
-      
+    
+$ get eta
     data = data_rdf.copy()
     r = data[:,0].copy()
     dr = r[1] - r[0]
@@ -49,11 +50,20 @@ def calc_eta(atoms,cutoff_radius,n_of_bins):
     dv = 1/V0*4/3*np.pi * ((r+dr/2)**3 - (r-dr/2)**3)
     n = (n.T * dv).T
 
-    n = n * cc_scale
+    eta = n * cc_scale
 
-    return rdf_names, n
+# short eta(delte 0 row)
+    eta = eta[eta.sum(axis=1)!=0,:]
 
+# check order
+    if(rdf_names[0] != order):
+        eta = np.array([i[::-1] for i in eta])
 
+    return eta
+
+def sro_fcc(eta):
+    eta_tot = np.array([12, 6,24,12,24,8,48,6,36,24,24,24,72])
+    
 
 
 # require file perfect_lattice
