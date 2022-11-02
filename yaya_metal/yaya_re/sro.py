@@ -41,7 +41,7 @@ def calc_eta(atoms,cutoff_radius,n_of_bins,order):
 # cc_scale
     cc_scale = calc_cc_scale(atoms.cn)
     
-$ get eta
+# get eta
     data = data_rdf.copy()
     r = data[:,0].copy()
     dr = r[1] - r[0]
@@ -61,10 +61,13 @@ $ get eta
 
     return eta
 
-def sro_fcc(eta):
-    eta_tot = np.array([12, 6,24,12,24,8,48,6,36,24,24,24,72])
+def sro_from_eta(atoms,eta):
+    sro = np.array([1 - i[1]/2/(atoms.cn[0]*atoms.cn[1]*(i[0]+i[1]+i[2])) for i in eta])
+    return sro
     
 
+    
+    
 
 # require file perfect_lattice
 
