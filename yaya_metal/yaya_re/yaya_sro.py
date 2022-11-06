@@ -5,6 +5,18 @@ from yaya_metal.yaya_re import yaya_io
 import numpy as np
 import os, re
 
+
+def calc_rdf(atoms,cutoff_radius,n_of_bins):
+# get rdf
+    from ovito.pipeline import StaticSource, Pipeline
+    from ovito.io.ase import ase_to_ovito
+    data = ase_to_ovito(atoms)
+    pipeline = Pipeline(source = StaticSource(data = data))
+    pipeline.modifiers.append(CoordinationAnalysisModifier(cutoff=cutoff_radius, number_of_bins=n_of_bins, partial=False))
+    rdf_table = pipeline.compute().tables['coordination-rdf']
+    data_rdf = rdf_table.xy()
+    return data_rdf
+
 # scale rdf to eta
 def calc_cc_scale(cn):
     # scaling factors, e.g., c1c1, 2c1c2, c2c2
@@ -22,6 +34,8 @@ def calc_cc_scale(cn):
             cc_scale = np.append(cc_scale, temp)
 
     return cc_scale
+
+
 
 #a = 3.81
 #V0 = a**3/4
